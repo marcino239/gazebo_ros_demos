@@ -6,8 +6,9 @@
   <xacro:property name="PI" value="3.1415926535897931"/>
   <xacro:property name="width" value="0.1" /> <!-- Square dimensions (widthxwidth) of beams -->
   <xacro:property name="height1" value="2" /> <!-- Link 1 -->
-  <xacro:property name="height2" value="1" /> <!-- Link 2 -->
-  <xacro:property name="height3" value="1" /> <!-- Link 3 -->
+  <xacro:property name="height2" value="0.8" /> <!-- Link 2 -->
+  <xacro:property name="height3" value="0.8" /> <!-- Link 3 -->
+  <xacro:property name="height4" value="0.8" /> <!-- Link 4 -->
   <xacro:property name="camera_link" value="0.05" /> <!-- Size of square 'camera' box -->
   <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
 
@@ -56,7 +57,8 @@
     <child link="link2"/>
     <origin xyz="0 ${width} ${height1 - axel_offset}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.7"/>
+	<limit effort="1000" velocity="2.0" lower="${-PI*1.25}" upper="${+PI*1.25}" />
+    <dynamics damping="10"/>
   </joint>
 
   <!-- Middle Link -->
@@ -88,10 +90,45 @@
 
   <joint name="joint2" type="continuous">
     <parent link="link2"/>
-    <child link="link3"/>
+    <child link="link4"/>
     <origin xyz="0 ${width} ${height2 - axel_offset*2}" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.7"/>
+    <dynamics damping="10"/>
+  </joint>
+
+  <!-- Middle Link 2 -->
+  <link name="link4">
+    <collision>
+      <origin xyz="0 0 ${height4/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+	<box size="${width} ${width} ${height4}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${height4/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+	<box size="${width} ${width} ${height4}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${height4/2 - axel_offset}" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+	  ixx="1.0" ixy="0.0" ixz="0.0"
+	  iyy="1.0" iyz="0.0"
+	  izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="joint3" type="continuous">
+    <parent link="link4"/>
+    <child link="link3"/>
+    <origin xyz="0 ${width} ${height4 - axel_offset*2}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="10"/>
   </joint>
 
   <!-- Top Link -->
@@ -121,66 +158,107 @@
     </inertial>
   </link>
 
-  <joint name="hokuyo_joint" type="fixed">
-    <axis xyz="0 1 0" />
-    <origin xyz="0 0 ${height3 - axel_offset/2}" rpy="0 0 0"/>
+  <joint name="gripper_palm_joint" type="fixed">
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0 0 0.475"/>
     <parent link="link3"/>
-    <child link="hokuyo_link"/>
+    <child link="palm"/>
   </joint>
 
-  <!-- Hokuyo Laser -->
-  <link name="hokuyo_link">
+  <link name="palm">
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0.0 0.0 0.3" rpy="0 0 0"/>
       <geometry>
-	<box size="0.1 0.1 0.1"/>
+		<box size="0.1 0.4 0.1"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0.0 0.0 0.3" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://rrbot_description/meshes/hokuyo.dae"/>
+	<box size="0.1 0.4 0.1"/>
       </geometry>
+      <material name="orange"/>
     </visual>
 
     <inertial>
-      <mass value="1e-5" />
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+      <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia
+	  ixx="1.0" ixy="0.0" ixz="0.0"
+	  iyy="1.0" iyz="0.0"
+	  izz="1.0"/>
     </inertial>
   </link>
 
-  <joint name="camera_joint" type="fixed">
-    <axis xyz="0 1 0" />
-    <origin xyz="${camera_link} 0 ${height3 - axel_offset*2}" rpy="0 0 0"/>
-    <parent link="link3"/>
-    <child link="camera_link"/>
+  <joint name="gripper_left_finger_joint" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0 0 0.475"/>
+    <limit effort="1000.0" lower="-0.2" upper="0" velocity="0.5"/>
+    <parent link="palm"/>
+    <child link="left_finger"/>
   </joint>
 
-  <!-- Camera -->
-  <link name="camera_link">
+  <link name="left_finger">
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0.0 0.2 0.1" rpy="0 0 0"/>
       <geometry>
-	<box size="${camera_link} ${camera_link} ${camera_link}"/>
+		<box size="0.1 0.1 0.4"/>
       </geometry>
     </collision>
 
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0.0 0.2 0.1" rpy="0 0 0"/>
       <geometry>
-	<box size="${camera_link} ${camera_link} ${camera_link}"/>
+		<box size="0.1 0.1 0.4"/>
       </geometry>
-      <material name="red"/>
+      <material name="orange"/>
     </visual>
 
     <inertial>
-      <mass value="1e-5" />
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+      <origin xyz="0.0 0.2 0.1" rpy="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia
+	  ixx="1.0" ixy="0.0" ixz="0.0"
+	  iyy="1.0" iyz="0.0"
+	  izz="1.0"/>
     </inertial>
   </link>
+
+  <joint name="gripper_right_finger_joint" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0 0 0.475"/>
+    <limit effort="1000.0" lower="0" upper="0.2" velocity="0.5"/>
+    <parent link="palm"/>
+    <child link="right_finger"/>
+  </joint>
+
+  <link name="right_finger">
+    <collision>
+      <origin xyz="0.0 -0.2 0.1" rpy="0 0 0"/>
+      <geometry>
+		<box size="0.1 0.1 0.4"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 -0.2 0.1" rpy="0 0 0"/>
+      <geometry>
+		<box size="0.1 0.1 0.4"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0.0 -0.2 0.1" rpy="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia
+	  ixx="1.0" ixy="0.0" ixz="0.0"
+	  iyy="1.0" iyz="0.0"
+	  izz="1.0"/>
+    </inertial>
+  </link>
+
 
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
@@ -199,6 +277,39 @@
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran3">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint3">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor3">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran4">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="gripper_left_finger_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor4">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran5">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="gripper_right_finger_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor5">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>

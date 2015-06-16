@@ -13,3 +13,15 @@ rrbot:
     type: effort_controllers/JointPositionController
     joint: joint2
     pid: {p: 100.0, i: 0.01, d: 10.0}
+  joint3_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: joint3
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  gripper_left_finger_joint_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: gripper_left_finger_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  gripper_right_finger_joint_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: gripper_right_finger_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
