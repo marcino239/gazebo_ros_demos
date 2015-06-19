@@ -197,6 +197,7 @@
     <limit effort="1000.0" lower="-0.2" upper="0" velocity="0.5"/>
     <parent link="palm"/>
     <child link="left_finger"/>
+    <dynamics damping="10"/>
   </joint>
 
   <link name="left_finger">
@@ -231,6 +232,7 @@
     <limit effort="1000.0" lower="0" upper="0.2" velocity="0.5"/>
     <parent link="palm"/>
     <child link="right_finger"/>
+    <dynamics damping="10"/>
   </joint>
 
   <link name="right_finger">
@@ -259,7 +261,39 @@
     </inertial>
   </link>
 
+  <joint name="camera_joint" type="revolute">
+    <axis xyz="0 1 0" />
+    <origin xyz="${camera_link * 2} 0 ${height1 - axel_offset*2}" rpy="0 0 0"/>
+    <parent link="link1"/>
+    <child link="camera_link"/>
+	<limit effort="1000" velocity="2.0" lower="${-PI*1.25}" upper="${+PI*1.25}" />
+    <dynamics damping="10"/>
+  </joint>
+  
+  <!-- Camera      -->
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+    </collision>
 
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+    </inertial>
+  </link>
+  
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint1">
@@ -310,6 +344,17 @@
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor5">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran6">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="camera_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor6">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
