@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import rospy
 
 from kbhit import getch, kbhit, kbhit_init
@@ -13,9 +15,12 @@ GRIPPER_RIGHT_FINGER = '/rrbot/gripper_right_finger_joint_position_controller'
 JOINT1 = '/rrbot/joint1_position_controller'
 JOINT2 = '/rrbot/joint2_position_controller'
 JOINT3 = '/rrbot/joint3_position_controller'
+CAMERA_JOINT = '/rrbot/camera_joint_position_controller'
 JOINT_STATES = '/rrbot/joint_states'
 
 GRIPPER = 'gripper'
+
+LEGEND = 'JOINT1: 1,2;  JOINT2: 3,4;  JOINT3: 5,6;  GRIPPER: 7,8;  CAMERA_JOINT: 9,0'
 
 key_map = { '1': ( JOINT1, False ),
 			'2': ( JOINT1, True ),
@@ -25,6 +30,8 @@ key_map = { '1': ( JOINT1, False ),
 			'6': ( JOINT3, True ),
 			'7': ( GRIPPER, False ),
 			'8': ( GRIPPER, True ),
+			'9': ( CAMERA_JOINT, False ),
+			'0': ( CAMERA_JOINT, True ),
 		  }
 
 
@@ -81,6 +88,8 @@ def main():
 
 	# set subscribers
 	rospy.Subscriber( JOINT_STATES, JointState, joint_states_callback )
+
+	print( LEGEND )
 
 	while not rospy.is_shutdown():
 

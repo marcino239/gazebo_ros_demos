@@ -267,7 +267,7 @@
     <parent link="link1"/>
     <child link="camera_link"/>
 	<limit effort="1000" velocity="2.0" lower="${-PI*1.25}" upper="${+PI*1.25}" />
-    <dynamics damping="10"/>
+    <dynamics damping="1"/>
   </joint>
   
   <!-- Camera      -->

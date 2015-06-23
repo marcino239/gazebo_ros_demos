@@ -25,3 +25,7 @@ rrbot:
     type: effort_controllers/JointPositionController
     joint: gripper_right_finger_joint
     pid: {p: 100.0, i: 0.01, d: 10.0}
+  camera_joint_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: camera_joint
+    pid: {p: 100.0, i: 0.01, d: 10.0}
