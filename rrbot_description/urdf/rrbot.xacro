@@ -261,7 +261,7 @@
     </inertial>
   </link>
 
-  <joint name="camera_joint" type="revolute">
+  <joint name="camera_joint" type="continuous">
     <axis xyz="0 1 0" />
     <origin xyz="${camera_link * 2} 0 ${height1 - axel_offset*2}" rpy="0 0 0"/>
     <parent link="link1"/>

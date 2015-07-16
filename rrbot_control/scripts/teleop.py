@@ -64,8 +64,8 @@ def joint_states_callback( msg ):
 	for i in range( len( msg.name ) ):
 		joint_states_dict[ '/rrbot/' + msg.name[ i ] + '_position_controller' ] = float( msg.position[ i ] )
 	
-	if msg.header.seq % 100 == 0:
-		print( joint_states_dict )
+#	if msg.header.seq % 100 == 0:
+#		print( joint_states_dict )
 
 def main():
 	kbhit_init()
@@ -78,12 +78,14 @@ def main():
 	publishers_dict[ JOINT3 ] = rospy.Publisher( JOINT3 + '/command', Float64, queue_size=10 )
 	publishers_dict[ GRIPPER_LEFT_FINGER ] = rospy.Publisher( GRIPPER_LEFT_FINGER + '/command', Float64, queue_size=10 )
 	publishers_dict[ GRIPPER_RIGHT_FINGER ] = rospy.Publisher( GRIPPER_RIGHT_FINGER + '/command', Float64, queue_size=10 )
+	publishers_dict[ CAMERA_JOINT ] = rospy.Publisher( CAMERA_JOINT + '/command', Float64, queue_size=10 )
 
 	publishers_value_dict[ JOINT1 ] = 0.0
 	publishers_value_dict[ JOINT2 ] = 0.0
 	publishers_value_dict[ JOINT3 ] = 0.0
 	publishers_value_dict[ GRIPPER_LEFT_FINGER ] = 0.0
 	publishers_value_dict[ GRIPPER_RIGHT_FINGER ] = 0.0
+	publishers_value_dict[ CAMERA_JOINT ] = 0.0
 
 
 	# set subscribers

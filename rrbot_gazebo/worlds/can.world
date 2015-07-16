@@ -25,7 +25,7 @@
       <include>
         <uri>model://beer</uri>
       </include>
-      <pose>1 0.504428 0 0 -0 0</pose>
+      <pose>1 0.304428 0 0 0 0</pose>
     </model>
 
   </world>

@@ -8,24 +8,24 @@ rrbot:
   joint1_position_controller:
     type: effort_controllers/JointPositionController
     joint: joint1
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 600.0, i: 10.0, d: 10.0, i_clamp: 10}
   joint2_position_controller:
     type: effort_controllers/JointPositionController
     joint: joint2
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 600.0, i: 10.0, d: 10.0, i_clamp: 10}
   joint3_position_controller:
     type: effort_controllers/JointPositionController
     joint: joint3
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 600.0, i: 10.0, d: 10.0, i_clamp: 10}
   gripper_left_finger_joint_position_controller:
     type: effort_controllers/JointPositionController
     joint: gripper_left_finger_joint
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 600.0, i: 10.0, d: 10.0, i_clamp: 10}
   gripper_right_finger_joint_position_controller:
     type: effort_controllers/JointPositionController
     joint: gripper_right_finger_joint
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 600.0, i: 10.0, d: 10.0, i_clamp: 10}
   camera_joint_position_controller:
     type: effort_controllers/JointPositionController
     joint: camera_joint
-    pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 600.0, i: 10.0, d: 10.0, i_clamp: 10}

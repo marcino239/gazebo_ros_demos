@@ -49,6 +49,68 @@
     <mu2>0.2</mu2>
     <material>Gazebo/Green</material>
   </gazebo>
+  <!-- left_finger -->
+  <gazebo reference="left_finger">
+    <mu1>1000.0</mu1>
+    <mu2>1000.0</mu2>
+    <slip1>0.0</slip1>
+    <slip2>0.0</slip2>
+    <material>Gazebo/Green</material>
+  </gazebo>
+  <!-- left_finger -->
+  <gazebo reference="right_finger">
+    <mu1>1000.0</mu1>
+    <mu2>1000.0</mu2>
+    <slip1>0.0</slip1>
+    <slip2>0.0</slip2>
+    <material>Gazebo/Green</material>
+  </gazebo>
+  <!-- camera_link -->
+  <gazebo reference="camera_link">
+    <mu1>0.2</mu1>
+    <mu2>0.2</mu2>
+    <material>Gazebo/Red</material>
+  </gazebo>
+  <!-- camera -->
+  <gazebo reference="camera_link">
+    <sensor name="camera1" type="camera">
+      <update_rate>20.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>256</width>
+          <height>256</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.  
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="camera_controller">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>rrbot/camera1</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+    </sensor>
+  </gazebo>
   <!-- Import Rviz colors -->
   <material name="black">
     <color rgba="0.0 0.0 0.0 1.0"/>
@@ -106,7 +168,8 @@
     <child link="link2"/>
     <origin rpy="0 0 0" xyz="0 0.1 1.95"/>
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.7"/>
+    <limit effort="1000" lower="-3.92699081699" upper="3.92699081699" velocity="2.0"/>
+    <dynamics damping="10"/>
   </joint>
   <!-- Middle Link -->
   <link name="link2">
@@ -134,7 +197,7 @@
     <child link="link4"/>
     <origin rpy="0 0 0" xyz="0 0.1 0.7"/>
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.7"/>
+    <dynamics damping="10"/>
   </joint>
   <!-- Middle Link 2 -->
   <link name="link4">
@@ -162,7 +225,7 @@
     <child link="link3"/>
     <origin rpy="0 0 0" xyz="0 0.1 0.7"/>
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.7"/>
+    <dynamics damping="10"/>
   </joint>
   <!-- Top Link -->
   <link name="link3">
@@ -192,33 +255,109 @@
     <child link="palm"/>
   </joint>
   <link name="palm">
-    <pose>0.0 0.0 0.05 0 0 0</pose>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.3"/>
+      <geometry>
+        <box size="0.1 0.4 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.3"/>
+      <geometry>
+        <box size="0.1 0.4 0.1"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
     <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0.025"/>
-      <mass value="1"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.2"/>
+      <mass value="0.1"/>
       <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
     </inertial>
-    <collision name="collision">
+  </link>
+  <joint name="gripper_left_finger_joint" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0 0 0.475"/>
+    <limit effort="1000.0" lower="-0.2" upper="0" velocity="0.5"/>
+    <parent link="palm"/>
+    <child link="left_finger"/>
+    <dynamics damping="10"/>
+  </joint>
+  <link name="left_finger">
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0.2 0.1"/>
       <geometry>
-        <box>
-          <size>0.1 0.2 0.1</size>
-        </box>
+        <box size="0.1 0.1 0.4"/>
       </geometry>
-      <surface>
-        <contact>
-          <ode>
-            <max_vel>0.0</max_vel>
-          </ode>
-        </contact>
-      </surface>
     </collision>
-    <visual name="visual">
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0.2 0.1"/>
       <geometry>
-        <box>
-          <size>0.1 0.2 0.1</size>
-        </box>
+        <box size="0.1 0.1 0.4"/>
       </geometry>
+      <material name="orange"/>
     </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 0.2 0.1"/>
+      <mass value="0.1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <joint name="gripper_right_finger_joint" type="prismatic">
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0 0 0.475"/>
+    <limit effort="1000.0" lower="0" upper="0.2" velocity="0.5"/>
+    <parent link="palm"/>
+    <child link="right_finger"/>
+    <dynamics damping="10"/>
+  </joint>
+  <link name="right_finger">
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 -0.2 0.1"/>
+      <geometry>
+        <box size="0.1 0.1 0.4"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 -0.2 0.1"/>
+      <geometry>
+        <box size="0.1 0.1 0.4"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 -0.2 0.1"/>
+      <mass value="0.1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <joint name="camera_joint" type="revolute">
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0.1 0 1.9"/>
+    <parent link="link1"/>
+    <child link="camera_link"/>
+    <limit effort="1000" lower="-3.92699081699" upper="3.92699081699" velocity="2.0"/>
+    <dynamics damping="1"/>
+  </joint>
+  <!-- Camera      -->
+  <link name="camera_link">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.05"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <inertial>
+      <mass value="0.1"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
   </link>
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
@@ -252,7 +391,7 @@
   </transmission>
   <transmission name="tran4">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="palm_right_finger">
+    <joint name="gripper_left_finger_joint">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor4">
@@ -262,7 +401,7 @@
   </transmission>
   <transmission name="tran5">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="palm_left_finger">
+    <joint name="gripper_right_finger_joint">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor5">
@@ -272,20 +411,10 @@
   </transmission>
   <transmission name="tran6">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_finger_tip">
+    <joint name="camera_joint">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor6">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
-  <transmission name="tran7">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_finger_tip">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor7">
       <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
